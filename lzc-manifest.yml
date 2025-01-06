@@ -1,0 +1,12 @@
+lzc-sdk-version: 0.1
+name: 荣荣打印
+package: cloud.lazycat.app.printing
+version: 0.0.1
+description:
+license: https://choosealicense.com/licenses/mit/
+homepage:
+author:
+application:
+  subdomain: printing
+  routes:
+    - /=exec://9080,./lzcapp/pkg/content/run.sh

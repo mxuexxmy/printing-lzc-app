@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include/include :: head('打印月记录-打印收支管理系统')"/>
+</head>
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+
+    <th:block th:replace="include/header :: header"/>
+
+    <!-- Full Wnameth Column -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Content Header (页眉) -->
+            <section class="content-header">
+                <h1>
+                    打印统计
+                    <small>每月记录</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
+                    <li><a href="#">打印统计</a></li>
+                    <li class="active">每月记录</li>
+                </ol>
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="box box-default">
+
+                    <th:block th:replace="commons/commons :: box-title('每月打印统计列表')"/>
+
+                    <div class="box box-info box-info-search" style="display: none;">
+                        <div class="box-header">
+                            <h3 class="box-title">高级搜索</h3>
+                        </div>
+
+                        <div class="box-body">
+                            <div class="row form-horizontal">
+                                <div class="col-xs-12 col-sm-3">
+                                    <div class="form-group">
+                                        <label  class="col-sm-4 control-label">日期</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="monthTime" name="monthTine" class="form-control" placeholder="请选择日期">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-info pull-right" onclick="search();">搜索</button>
+                        </div>
+                    </div>
+
+                    <div class="box-body">
+                        <a type="button" class="btn btn-info" href="/input-printf">
+                            <i class="fa fa-plus "></i> 录入打印
+                        </a>
+                        <a  type="button" class="btn btn-info" href="/order-input">
+                            <i class="fa fa-plus "></i> 详细录入
+                        </a>
+                        <a type="button" class="btn btn-info"
+                                onclick="$('.box-info-search').css('display') == 'none' ? $('.box-info-search').show('fast') : $('.box-info-search').hide('fast')">
+                            <i class="fa fa-search"></i> 搜索
+                        </a>
+
+                        <table id="dataTable" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>月份</th>
+                                <th>份数</th>
+                                <th>金额</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <!-- /.content-wrapper -->
+    <th:block th:replace="include/footer :: footer"/>
+</div>
+<!-- ./wrapper -->
+
+<th:block th:include="include/include :: foot"/>
+
+<script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+
+<script>
+    var _dataTable;
+
+    $(function () {
+        var _columns = [
+            {"data": "id"},
+            {"data": "statsMonth"},
+            {"data": "printfNumber"},
+            {"data": "totalAmount"},
+            {"data": "updateTime"},
+            {
+                "data": function (row, type, val, meta) {
+                    let updateUrl = "/printing/tb-order-month/update/" + row.id;
+                    let goUrl = "/printing/tb-order-month";
+                    return '<a  type="button" onclick="statisticsRecord(\'' + updateUrl + '\', \''+ goUrl + '\')"  class="btn btn-sm btn-default" ><i class="fa  fa-refresh"></i> 更新</a>&nbsp;&nbsp;&nbsp;'
+                }
+            }
+        ];
+
+        _dataTable = App.initDataTables("/printing/tb-order-month/page", _columns);
+    });
+
+    laydate.render({
+        elem: '#monthTime', //指定元素
+        type: 'month'
+    });
+    function search() {
+        let monthTime = $("#monthTime").val();
+
+        let param = {
+            "flagPermDate": monthTime
+        };
+        _dataTable.settings()[0].ajax.data = param;
+        _dataTable.ajax.reload();
+    };
+
+</script>
+</body>
+</html>
